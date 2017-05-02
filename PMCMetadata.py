@@ -8,7 +8,7 @@ import os
 import sys
 import pubmed_parser as pp  # pip install git+https://github.com/titipata/pubmed_parser.git
 from rdflib import Namespace
-from rdflib.namespace import RDF, FOAF, DCTERMS
+from rdflib.namespace import RDF, FOAF, DCTERMS, RDFS
 from rdflib import Graph
 from rdflib import URIRef, Literal, BNode
 import base64
@@ -54,7 +54,6 @@ def TripleMaker(file_dir):
     #add namespaces
     ccp_ext = Namespace("http://ccp.ucdenver.edu/obo/ext/")
     bibo = Namespace("http://purl.org/ontology/bibo/")
-    biro = Namespace("http://purl.org/spar/biro")
     obo = Namespace("http://purl.obolibrary.org/obo/")
     edam = Namespace("http://edamontology.org/")
     swo = Namespace("http://www.ebi.ac.uk/swo/")
@@ -66,16 +65,15 @@ def TripleMaker(file_dir):
             if item.endswith('.nxml.gz'):
                 c_inf = BibParser(item)
 
-                #create triples - citation metadata
-                g.add((URIRef(str(ccp_ext) + 'BR_PMC_' + str(c_inf[0])), RDF.type, URIRef(str(biro) + 'BibliographicReference')))
-                g.add((URIRef(str(ccp_ext) + 'BR_PMC_' + str(c_inf[0])), URIRef(str(biro) + 'references'), URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]))))
+                #create triples - article class
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), RDFS.subClassOf, URIRef(str(obo) + 'IAO_0000311')))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), URIRef(str(bibo) + 'pmid'), Literal(str(c_inf[1]))))
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), URIRef(str(ccp_ext) + 'BIBO_EXT_0000001'), Literal(str(c_inf[0]))))
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), URIRef(str(ccp_ext) + 'BIBO_EXT_0000001'), Literal('PMC' + str(c_inf[0]))))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), DCTERMS.title, Literal(str(c_inf[2]))))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), URIRef(str(bibo) + 'doi'), Literal(str(c_inf[3]))))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), DCTERMS.published, Literal(str(c_inf[4]))))
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), DCTERMS.title, Literal(str(c_inf[5]))))
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), RDF.type, URIRef(str(ccp_ext) + 'J_' + base64.b64encode(hashlib.sha1(str(c_inf[5])).digest()))))
+                g.add((URIRef(str(ccp_ext) + 'J_' + base64.b64encode(hashlib.sha1(str(c_inf[5])).digest())), DCTERMS.title, Literal(str(c_inf[5]))))
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), URIRef(str(obo) + 'BFO_0000050'), URIRef(str(ccp_ext) + 'J_' + base64.b64encode(hashlib.sha1(str(c_inf[5])).digest()))))
 
                 for author in c_inf[6]:
                     a_hash = base64.b64encode(hashlib.sha1(str(author[1]) + str(author[0])).digest())
@@ -84,14 +82,14 @@ def TripleMaker(file_dir):
                     g.add((URIRef(str(ccp_ext) + 'A_' + str(a_hash)), FOAF.familyName, Literal(str(author[0]))))
                     g.add((URIRef(str(ccp_ext) + 'A_' + str(a_hash)), FOAF.givenName, Literal(str(author[1]))))
 
-                #create triples - article documentaion
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), URIRef(str(swo) + 'SWO_0004002'), URIRef(str(edam) + 'format_2332')))
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), URIRef(str(swo) + 'SWO_0000046'), Literal(str('/'.join(item.split('/')[:-1])) + '/' + str(c_inf[0]) + '.nxml.gz')))
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), RDF.type, URIRef(str(obo) + 'IAO_0000311')))
+                #create triples - article instances
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), RDF.type, URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + "_XML")))
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), RDF.type, URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + "_TXT")))
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + "_XML"), URIRef(str(swo) + 'SWO_0004002'), URIRef(str(edam) + 'format_2332')))
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])  + "_XML"), URIRef(str(swo) + 'SWO_0000046'), Literal(str('/'.join(item.split('/')[:-1])) + '/' + str(c_inf[0]) + '.nxml.gz')))
                 g.add((BNode(), URIRef(str(swo) + 'SWO_0000086'), URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]))))
                 g.add((BNode(), RDF.type, URIRef(str(edam) + 'operation_0335')))
                 g.add((BNode(), URIRef(str(swo) + 'SWO_0000087'), URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT')))
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT'), RDF.type, URIRef(str(obo) + 'IAO_0000311')))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT'), URIRef(str(swo) + 'SWO_0004002'), URIRef(str(swo) + 'SWO_30000043')))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT'), URIRef(str(swo) + 'SWO_0000046'), Literal(str('/'.join(item.split('/')[:-1])) + '/' + str(c_inf[0]) + '.nxml.gz.txt.gz')))
 
