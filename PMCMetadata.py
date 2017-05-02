@@ -73,6 +73,8 @@ def TripleMaker(file_dir):
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), URIRef(str(bibo) + 'doi'), Literal(str(c_inf[3]))))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), DCTERMS.published, Literal(str(c_inf[4]))))
                 g.add((URIRef(str(ccp_ext) + 'J_' + base64.b64encode(hashlib.sha1(str(c_inf[5])).digest())), DCTERMS.title, Literal(str(c_inf[5]))))
+                g.add((URIRef(str(ccp_ext) + 'J_' + base64.b64encode(hashlib.sha1(str(c_inf[5])).digest())),
+                       RDF.type, URIRef(str(bibo) + 'Journal')))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), URIRef(str(obo) + 'BFO_0000050'), URIRef(str(ccp_ext) + 'J_' + base64.b64encode(hashlib.sha1(str(c_inf[5])).digest()))))
 
                 for author in c_inf[6]:
@@ -83,13 +85,14 @@ def TripleMaker(file_dir):
                     g.add((URIRef(str(ccp_ext) + 'A_' + str(a_hash)), FOAF.givenName, Literal(str(author[1]))))
 
                 #create triples - article instances
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), RDF.type, URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + "_XML")))
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])), RDF.type, URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + "_TXT")))
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + "_XML"), URIRef(str(swo) + 'SWO_0004002'), URIRef(str(edam) + 'format_2332')))
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0])  + "_XML"), URIRef(str(swo) + 'SWO_0000046'), Literal(str('/'.join(item.split('/')[:-1])) + '/' + str(c_inf[0]) + '.nxml.gz')))
-                g.add((BNode(), URIRef(str(swo) + 'SWO_0000086'), URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]))))
-                g.add((BNode(), RDF.type, URIRef(str(edam) + 'operation_0335')))
-                g.add((BNode(), URIRef(str(swo) + 'SWO_0000087'), URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT')))
+                format_conversion_uri = base64.b64encode(hashlib.sha1(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_XML' + str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT').digest())
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_XML'), RDF.type, URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]))))
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT'), RDF.type, URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]))))
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_XML'), URIRef(str(swo) + 'SWO_0004002'), URIRef(str(edam) + 'format_2332')))
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_XML'), URIRef(str(swo) + 'SWO_0000046'), Literal(str('/'.join(item.split('/')[:-1])) + '/' + str(c_inf[0]) + '.nxml.gz')))
+                g.add((URIRef(str(ccp_ext) + 'FC_' + str(format_conversion_uri)), URIRef(str(swo) + 'SWO_0000086'), URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_XML')))
+                g.add((URIRef(str(ccp_ext) + 'FC_' + str(format_conversion_uri)), RDF.type, URIRef(str(edam) + 'operation_0335')))
+                g.add((URIRef(str(ccp_ext) + 'FC_' + str(format_conversion_uri)), URIRef(str(swo) + 'SWO_0000087'), URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT')))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT'), URIRef(str(swo) + 'SWO_0004002'), URIRef(str(swo) + 'SWO_30000043')))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT'), URIRef(str(swo) + 'SWO_0000046'), Literal(str('/'.join(item.split('/')[:-1])) + '/' + str(c_inf[0]) + '.nxml.gz.txt.gz')))
 
