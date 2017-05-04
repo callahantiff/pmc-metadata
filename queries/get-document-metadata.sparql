@@ -1,3 +1,4 @@
+prefix swo: <http://www.ebi.ac.uk/swo/>
 prefix foaf: <http://xmlns.com/foaf/0.1/>
 prefix bibo: <http://purl.org/ontology/bibo/>
 prefix ccp: <http://ccp.ucdenver.edu/obo/ext/>
@@ -6,29 +7,35 @@ prefix obo: <http://purl.obolibrary.org/obo/>
 prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 prefix franzOption_clauseReorderer: <franz:identity> 
 
-# Returns document metadata for the document specified by the PMC identifier
-# Note, some documents may not have a PubMed ID.
-# Authors are returned as "last_name, first_name" and are delimited by semi-colons
+# Returns document metadata for the document specified by the PMC
+# identifier including the path to the file on the local file system
+# Note, some documents may not have a PubMed ID.  Authors are returned
+# as "last_name, first_name" and are delimited by semi-colons
 
-select ?pmid ?document_title ?pub_year ?journal_title 
-(GROUP_CONCAT(CONCAT(?author_last_name, ", ", ?author_first_name) ; SEPARATOR = "; ") AS ?authors) {
+select ?pmid ?document_title ?pub_year ?journal_title ?file_path
+       (GROUP_CONCAT(CONCAT(?author_last_name, ", ", ?author_first_name) ; SEPARATOR = "; ") AS ?authors) {
   ?d ccp:BIBO_EXT_0000001 "PMC3539383" .
   ?d dc:title ?document_title .
   ?d dc:published ?pub_year .
-
+  
   # retrieve the journal title in which the document was published
   ?d obo:BFO_0000050 ?journal . # BFO:part_of
   ?journal dc:title ?journal_title .
-
-  # retrieve the document author(s)
+ 
+  # retrieve the document author(s)  
   ?d dc:creator ?author .
   ?author foaf:givenName ?author_first_name .
   ?author foaf:familyName ?author_last_name .
+         
+  # retrieve the plain text file location
+  ?pt_instance rdf:type ?d .
+  ?pt_instance swo:SWO_0004002 swo:SWO_30000043 . # SWO:has_format_specification; SWO:plain_text_file_format
+  ?pt_instance swo:SWO_0000046 ?file_path . # SWO:has_download_location       
   
   OPTIONAL {
     ?d bibo:pmid ?pmid .
   }
     
-} GROUP BY ?pmid ?document_title ?pub_year ?journal_title
+} GROUP BY ?pmid ?document_title ?pub_year ?journal_title ?file_path
 
 
