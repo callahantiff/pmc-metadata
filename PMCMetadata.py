@@ -93,7 +93,7 @@ def TripleMaker(file_dir):
                 g.add((URIRef(str(ccp_ext) + 'FC_' + str(format_conversion_uri)), URIRef(str(swo) + 'SWO_0000086'), URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_XML')))
                 g.add((URIRef(str(ccp_ext) + 'FC_' + str(format_conversion_uri)), RDF.type, URIRef(str(edam) + 'operation_0335')))
                 g.add((URIRef(str(ccp_ext) + 'FC_' + str(format_conversion_uri)), URIRef(str(swo) + 'SWO_0000087'), URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT')))
-                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT'), URIRef(str(swo) + 'SWO_0004002'), URIRef(str(swo) + 'SWO_30000043')))
+                g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT'), URIRef(str(swo) + 'SWO_0004002'), URIRef(str(swo) + 'SWO_3000043')))
                 g.add((URIRef(str(ccp_ext) + 'P_PMC_' + str(c_inf[0]) + '_TXT'), URIRef(str(swo) + 'SWO_0000046'), Literal(str('/'.join(item.split('/')[:-1])) + '/' + str(c_inf[0]) + '.nxml.gz.txt.gz')))
 
 
