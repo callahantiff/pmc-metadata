@@ -100,7 +100,7 @@ def TripleMaker(file_dir):
 
     file_name = file_dir.split('/')[-1]
     out = str('/'.join(file_dir.split('/')[:-2])) + '/metadata_triples'
-    g.serialize(destination=str(out) + '/PMC_metadata_' + str(file_name) + '.xml', format='turtle')
+    g.serialize(destination=str(out) + '/PMC_metadata_' + str(file_name) + '.ttl', format='turtle')
 
     print 'Completed ' + str(file_dir)
 
