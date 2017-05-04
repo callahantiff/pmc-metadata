@@ -29,7 +29,7 @@ select ?pmid ?document_title ?pub_year ?journal_title ?file_path
          
   # retrieve the plain text file location
   ?pt_instance rdf:type ?d .
-  ?pt_instance swo:SWO_0004002 swo:SWO_30000043 . # SWO:has_format_specification; SWO:plain_text_file_format
+  ?pt_instance swo:SWO_0004002 swo:SWO_3000043 . # SWO:has_format_specification; SWO:plain_text_file_format
   ?pt_instance swo:SWO_0000046 ?file_path . # SWO:has_download_location       
   
   OPTIONAL {
