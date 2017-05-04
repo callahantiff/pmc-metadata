@@ -1,0 +1,29 @@
+prefix oa: <http://www.w3.org/ns/oa#>
+prefix obo: <http://purl.obolibrary.org/obo/>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix kiao: <http://kabob.ucdenver.edu/iao/>
+prefix franzOption_clauseReorderer: <franz:identity> 
+
+# For each annotation in the specified document this query returns the
+# annotation start and end character offsets and the annotated concept.
+# Note that the character offsets require the use of UTF-8 encoding.
+#
+# Example output:
+#
+# http://purl.org/linguistics/gold/OrthographicSentence  "4878"^^xsd:integer  "4971"^^xsd:integer
+# http://purl.obolibrary.org/obo/UBERON_0000310          "7280"^^xsd:integer  "7286"^^xsd:integer
+# http://purl.obolibrary.org/obo/PR_000001330            "2767"^^xsd:integer  "2770"^^xsd:integer
+
+select ?concept ?start ?end {
+  ?sr oa:hasSource kiao:document_PMC3539383 . # specify the document via PMC identifier
+  ?sr rdf:type oa:SpecificResource .
+  ?sr oa:hasSelector ?selector .
+  ?selector rdf:type oa:TextPositionSelector .
+  ?selector oa:start ?start .
+  ?selector oa:end ?end .
+  ?annotation oa:hasTarget ?sr .
+  ?annotation oa:hasBody ?concept .  
+}
+
+
+
