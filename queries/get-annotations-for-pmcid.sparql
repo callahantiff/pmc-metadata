@@ -15,7 +15,7 @@ prefix franzOption_clauseReorderer: <franz:identity>
 # http://purl.obolibrary.org/obo/PR_000001330            "2767"^^xsd:integer  "2770"^^xsd:integer
 
 select ?concept ?start ?end {
-  ?sr oa:hasSource kiao:document_PMC3539383 . # specify the document via PMC identifier
+  ?sr oa:hasSource kiao:document_PMC4857404 . # specify the document via PMC identifier
   ?sr rdf:type oa:SpecificResource .
   ?sr oa:hasSelector ?selector .
   ?selector rdf:type oa:TextPositionSelector .

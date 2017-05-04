@@ -14,7 +14,7 @@ prefix franzOption_clauseReorderer: <franz:identity>
 
 select ?pmid ?document_title ?pub_year ?journal_title ?file_path
        (GROUP_CONCAT(CONCAT(?author_last_name, ", ", ?author_first_name) ; SEPARATOR = "; ") AS ?authors) {
-  ?d ccp:BIBO_EXT_0000001 "PMC3539383" .
+  ?d ccp:BIBO_EXT_0000001 "PMC4857404" .
   ?d dc:title ?document_title .
   ?d dc:published ?pub_year .
   
